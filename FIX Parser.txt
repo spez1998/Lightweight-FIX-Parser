@@ -1,0 +1,33 @@
+https://github.com/quickfix/quickfix/blob/master/spec/FIX50.xml = QuickFIX spec XML
+https://github.com/Morgan-Stanley/pyfixmsg = open-source Python parser
+
+Parser takes input, checks against reference (XML) of FIX tags (called the FIX repo), outputs human-readable version INCLUDING Liquidnet-specific internal FIX tags, e.g., if
+we want to translate 13=1, x would be 13, y would be 1, the result would be CommType = PER_UNIT.
+
+Ideally, check the available FIX repo against an online reference, and download the online reference in the case of a discrepancy. Liquidnet-specific tags simply added to the
+new download via a novel method (?), athough this may not be easy since the official FIX repo is behind a login page.
+
+ElementTree will be used to parse the XML.
+
+Inputs will be in the form x=y, where x is a field, y is the value of the flag. y could be an integer or a string. x is always a string. It would probably be easiest to store
+the pair of values in one object, and the variables can be fed into the ElementTree code.
+
+for elem in tree.iterfind('fields/field[@number="13"]'):
+	print (elem.tag, elem.attrib)
+
+The above selects a particular field and lists its number, name, and type.
+
+tree.find('fields/field[@number="%s"]'% x).attrib['name']
+
+The above extracts the name for a particular flag x.
+
+tree.find('fields/field[@number="%s"]/value[@enum="%s"]' %(x,y)).attrib['description']
+
+The above extracts the name for a particular value y for a particular field x. Many flags do not have predefined values, so this cannot be run otherwise an error will result.
+Can probably try to check if a particular field has got values associated with it, if so, translate them and spit that result out as the translation, otherwise simply use the
+user input.
+
+For some length of FIX, delimited by the SOH character aka \x01 , and saved as an object fix, fix.split('\x01') removes the SOH delimiters. If this result is saved into a new
+object fix2, fix2 is now an array of strings.
+
+Unix date format for FIX day/time data is: date +%Y%m%d-%T
