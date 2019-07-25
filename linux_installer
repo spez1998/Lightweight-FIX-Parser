@@ -1,0 +1,9 @@
+#!/bin/bash
+
+py_dir=$PWD/'parser.py'
+echo "Install location detected at '$py_dir'"
+touch fixparse
+echo "python3 $py_dir" > $PWD/fixparse
+chmod +x fixparse
+mv $PWD/fixparse /usr/bin
+
