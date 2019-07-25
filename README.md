@@ -12,7 +12,7 @@ Licensed under the GNU General Public License 3.0
 
 Alternatively, simply run:
 ```
-python3 /path...to...repository/parser.py
+$ python3 /path...to...repository/parser.py
 
 ```
 
