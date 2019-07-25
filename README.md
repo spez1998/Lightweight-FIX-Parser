@@ -8,7 +8,7 @@ Licensed under the GNU General Public License 3.0
 ## Installation
 ### Linux
 1. Clone / download repository.
-2. Run linux_installer as root. It will place an executable script file called 'fixparse' into your /usr/bin, allowing you to call the program easily.
+2. Run linux_installer as root. It will place an executable script file called 'fixparse' into /usr/bin, allowing you to call the program easily.
 
 ### Windows
 1. Clone / download repository.
