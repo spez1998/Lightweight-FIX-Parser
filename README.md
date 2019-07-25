@@ -1,3 +1,13 @@
 # Lightweight-FIX-Parser
 A lightweight, fast parser for FIX messages.
-parse2.py is the actual FIX parser.
+Intended to be used for quick translation of a FIX message whilst debugging.
+Licensed under the GNU General Public License 3.0
+
+## Installation
+### Linux
+1. Clone / download repository.
+2. Run linux_installer as root. It will place an executable script file called 'fixparse' into your /usr/bin, allowing you to call the program easily.
+
+### Windows
+1. Clone / download repository.
+2. Simply double-click parser.py to use.
