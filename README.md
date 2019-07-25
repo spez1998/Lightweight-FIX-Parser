@@ -8,13 +8,24 @@ Licensed under the GNU General Public License 3.0
 ## Installation
 ### Linux
 1. Clone / download repository.
-2. Run linux_installer as root. It will place an executable script file called 'fixparse' into /usr/bin, allowing you to call the program easily.
-
-Alternatively, simply run:
-```
-$ python3 /path...to...repository/parser.py
-```
+2. Run `linux_installer` as root. **NOTE that this is optional** as explained in the Usage section.
 
 ### Windows
-1. Clone / download repository.
-2. Simply double-click parser.py to use.
+1. Simply clone / download repository.
+
+## Usage
+### Linux
+If you used the `linux_installer` script, an executable script file called `fixparse` is placed into your `/usr/bin` directory. Therefore, run:
+```
+$ fixparse
+```
+to run the script.
+
+If you did not use the `linux_installer` script, the script can be run as follows:
+```
+$ python3 /path/to/repository/parser.py
+```
+**Note** that piping data into the script causes Python's standard input to reach EOF before you can be prompted to run the script again. This will cause the script to exit, just re-run the script without piping data into it to continue using it and keep it open indefinitely. The exit message for the condition described details this.
+
+### Windows
+Double-click the `parser.py` file to run the script. 
