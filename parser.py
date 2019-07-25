@@ -41,10 +41,10 @@ def translator(raw_fix,delim_fix):
             delim_fix.remove('') # Remove all whitespaces from list. They remain due to delimiters present at the end of messages and cause issues unless removed.
         except ValueError:
             break
-
+    cwd = sys.argv[0].replace('/parser.py','')
     fix_spec_file_num = spec_loader(delim_fix[0].split('.')) # Global variable for FIX spec file name
     try:
-        tree = ET.parse('./spec/FIX{}.xml'.format(fix_spec_file_num)) # Reading the correct XML file
+        tree = ET.parse("{}/spec/FIX{}.xml".format(cwd,fix_spec_file_num)) # Reading the correct XML file
     except:
         print("Spec not supported. Please try again.\n")
     else:
