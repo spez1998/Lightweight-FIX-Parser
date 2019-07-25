@@ -26,9 +26,9 @@ def spec_loader(spec_block):
         fix_spec_file_num = ''.join(fix_spec_raw)
         print('FIX Specification',spec_block[1],".",spec_block[2],"detected.")
         return fix_spec_file_num
-    except IndexError:
+    except IndexError: # Helpful error message
         print("\nBad input. Please try again.")
-        main()
+        main() # Starts everything again
 
 def time_convert(raw_time):
     process_time = datetime.strptime(raw_time,'%Y%m%d-%H:%M:%S') # Parses FIX UTC timestamp as datetime object
@@ -74,8 +74,8 @@ def repeater():
     try:
         repeat = input("Parse more FIX? y/n\n")
     except EOFError:
-        print("\nstdin limit reached. Please launch the program again to continue using.\n")
-        sys.exit(0)
+        print("\nstdin limit reached. Please launch the program again to continue using.\n") # Helpful and succint error message instead of 3 lines of garbage
+        sys.exit(0) # Better than breaking while True loop below
     else:   
         if repeat == 'n':
             sys.exit(0)
@@ -85,8 +85,8 @@ def main():
         try:
             raw_fix = input("\n\nEnter FIX: \n\n")
         except KeyboardInterrupt:
-            print("\nUser interrupt detected. Exiting...\n")
-            sys.exit(0)
+            print("\nUser interrupt detected. Exiting...\n") # Looks nicer
+            sys.exit(0) # Better than breaking while True loop
         else:
             delim_fix = re.split('[|\s^A]',raw_fix)
             translator(raw_fix, delim_fix)
