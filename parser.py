@@ -13,6 +13,7 @@ import argparse
 import re # String manipulation library
 from datetime import datetime
 import sys
+import os
 
 def flags():
     parser = argparse.ArgumentParser()
@@ -41,7 +42,10 @@ def translator(raw_fix,delim_fix):
             delim_fix.remove('') # Remove all whitespaces from list. They remain due to delimiters present at the end of messages and cause issues unless removed.
         except ValueError:
             break
-    cwd = sys.argv[0].replace('/parser.py','')
+    to_replace = 'parser.py'
+    cwd = sys.argv[0].replace(to_replace,'')
+    if cwd == '':
+        cwd = '.'
     fix_spec_file_num = spec_loader(delim_fix[0].split('.')) # Global variable for FIX spec file name
     try:
         tree = ET.parse("{}/spec/FIX{}.xml".format(cwd,fix_spec_file_num)) # Reading the correct XML file
