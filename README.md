@@ -7,11 +7,11 @@ Licensed under the GNU General Public License 3.0
 
 ## Installation
 ### Linux
-1. Clone / download repository.
+1. Clone or download the repository.
 2. Run `linux_installer` as root. **NOTE that this is optional** as explained in the Usage section.
 
 ### Windows
-1. Simply clone / download repository.
+1. Simply clone or download the repository.
 
 ## Usage
 ### Linux
