@@ -1,6 +1,8 @@
 # Lightweight-FIX-Parser
 A lightweight, fast parser for FIX messages.
+
 Intended to be used for quick translation of a FIX message whilst debugging.
+
 Licensed under the GNU General Public License 3.0
 
 ## Installation
