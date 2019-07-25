@@ -14,8 +14,6 @@ import re # String manipulation library
 from datetime import datetime
 import sys
 
-print("Liquidnet Lightweight FIX Parser (written by Sujit Malde 2019)\n")
-
 def flags():
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--table", help="display translated FIX in rows and columns", action="store_true")
@@ -23,10 +21,14 @@ def flags():
     parser.parse_args()
 
 def spec_loader(spec_block):
-    fix_spec_raw = [spec_block[1],spec_block[2]]
-    fix_spec_file_num = ''.join(fix_spec_raw)
-    print('FIX Specification',spec_block[1],".",spec_block[2],"detected.")
-    return fix_spec_file_num
+    try:    
+        fix_spec_raw = [spec_block[1],spec_block[2]]
+        fix_spec_file_num = ''.join(fix_spec_raw)
+        print('FIX Specification',spec_block[1],".",spec_block[2],"detected.")
+        return fix_spec_file_num
+    except IndexError:
+        print("\nBad input. Please try again.")
+        main()
 
 def time_convert(raw_time):
     process_time = datetime.strptime(raw_time,'%Y%m%d-%H:%M:%S') # Parses FIX UTC timestamp as datetime object
@@ -68,23 +70,30 @@ def translator(raw_fix,delim_fix):
             print(field_trans,"\t\t=\t\t",value_trans,"\n") # Prints field and value with formatting
             y += 1 # Increments counter so that the loop performs the above actions for every block in the list
 
-def main():
-    #raw_fix = input("\n\nEnter FIX: \n\n") # Get the raw FIX message from the user (works via pipe)
-    #delim_fix = re.split('[|\s^A]',raw_fix) # Remove all common delimiters and place blocks into a list
-    #translator(raw_fix,delim_fix)
-    #for line in sys.stdin:
-    #    delim_fix = re.split('[|\s^A]',line) # Remove all common delimiters and place blocks into a list
-    #    translator(line,delim_fix)
-    #repeat = input('repeat?')
-    #print('skipped')
-    while True:
-        raw_fix = input("\n\nEnter FIX: \n\n")
-        delim_fix = re.split('[|\s^A]',raw_fix)
-        translator(raw_fix, delim_fix)
+def repeater():
+    try:
         repeat = input("Parse more FIX? y/n\n")
+    except EOFError:
+        print("\nstdin limit reached. Please launch the program again to continue using.\n")
+        sys.exit(0)
+    else:   
         if repeat == 'n':
-            break
+            sys.exit(0)
 
+def main():
+    while True:
+        try:
+            raw_fix = input("\n\nEnter FIX: \n\n")
+        except KeyboardInterrupt:
+            print("\nUser interrupt detected. Exiting...\n")
+            sys.exit(0)
+        else:
+            delim_fix = re.split('[|\s^A]',raw_fix)
+            translator(raw_fix, delim_fix)
+            repeater()
+
+ 
+         
 if __name__ == "__main__":
     main()
 
