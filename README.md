@@ -25,7 +25,9 @@ If you did not use the `linux_installer` script, the script can be run as follow
 ```
 $ python3 /path/to/repository/parser.py
 ```
-**Note** that piping data into the script causes Python's standard input to reach EOF before you can be prompted to run the script again. This will cause the script to exit, just re-run the script without piping data into it to continue using it and keep it open indefinitely. The exit message for the condition described details this.
-
 ### Windows
 Double-click the `parser.py` file to run the script. 
+
+##Known Issues
+Piping data into the script causes Python's standard input to reach EOF before you can be prompted to run the script again. This will cause the script to exit, just re-run the script without piping data into it to continue using it and keep it open indefinitely. The exit message for the condition described details this.
+
