@@ -91,7 +91,8 @@ def main():
             raw_fix = input("\n\nEnter FIX: \n\n")
         except KeyboardInterrupt:
             print("\nUser interrupt detected. Exiting...\n") # Looks nicer
-            sys.exit(0) # Better than breaking while True loop
+            # sys.exit(0) 
+	    # Better than breaking while True loop
         else:
             delim_fix = re.split('[|\s^A]',raw_fix)
             translator(raw_fix, delim_fix)
@@ -101,4 +102,3 @@ def main():
          
 if __name__ == "__main__":
     main()
-
