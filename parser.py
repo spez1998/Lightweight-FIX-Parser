@@ -55,7 +55,7 @@ def translator(raw_fix,delim_fix):
         root = tree.getroot()
         fields_num = len(delim_fix) # For debugging
         print(delim_fix) # For debugging
-        print("There are",fields_num,"FIX tags.\n")
+        print(fields_num,"FIX tag(s) detected.\n")
         y = 0 # Initialise counter for loop
         print("\n\tFIELD\t\t\t\t\t VALUE\n\n") # Initialise 'table'
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
@@ -99,7 +99,7 @@ def main():
             exit_handler() # Windows considers CTRL-V as a keyboard interrupt, so a KeyboardInterrupt error handle only works for Linux
             # Windows users must close the Python window manually
         else:
-            delim_fix = re.split('[|\s^A]',raw_fix)
+            delim_fix = re.split('[|\n\s^A]',raw_fix)
             translator(raw_fix, delim_fix)
             repeater()
 
