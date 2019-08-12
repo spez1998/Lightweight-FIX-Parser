@@ -54,10 +54,10 @@ def translator(raw_fix,delim_fix):
     else:
         root = tree.getroot()
         fields_num = len(delim_fix) # For debugging
-        print(delim_fix) # For debugging
+        print(delim_fix,"\n") # For debugging
         print(fields_num,"FIX tag(s) detected.\n")
         y = 0 # Initialise counter for loop
-        print("\n\tFIELD\t\t\t\t\t VALUE\n\n") # Initialise 'table'
+        print("\n\t      \t\t|\n\t  FIELD\t\t|\t\t\t\tVALUE\n\t      \t\t|\n\t      \t\t|") # Initialise 'table'
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
         for i in delim_fix:
             block_split = delim_fix[y].split('=') # Take each block and split into field and value
@@ -72,6 +72,8 @@ def translator(raw_fix,delim_fix):
                 value_trans = value # If an error is thrown, i.e. if a predefined value doesn't exist, simply passes user input to output
             else:
                 value_trans = tree.find('fields/field[@number="%s"]/value[@enum="%s"]'% (field,value)).attrib['description'] # Finds predefined value
+            if field == "8":
+                print("----------------------------------------------------------------------------------------\n")
             print("[",field,"]",field_trans," \t= \t","[",value,"]",value_trans,"\n") # Prints field and value with formatting
             y += 1 # Increments counter so that the loop performs the above actions for every block in the list
 
