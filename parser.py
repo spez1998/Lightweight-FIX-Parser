@@ -15,7 +15,7 @@ from datetime import datetime
 import sys
 import os
 
-def flags():
+def flags(): # Do something with this?
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--table", help="display translated FIX in rows and columns", action="store_true")
     parser.add_argument("-v", "--verbose", help="dispaly verbose FIX fields and values", action="store_true")
@@ -23,13 +23,13 @@ def flags():
 
 def spec_loader(spec_block):
     try:    
-        fix_spec_raw = [spec_block[1],spec_block[2]]
+        fix_spec_raw = [spec_block[1],spec_block[2]] # For telling the user which spec file is loaded
         fix_spec_file_num = ''.join(fix_spec_raw)
         print('FIX Specification',spec_block[1],".",spec_block[2],"detected.")
         return fix_spec_file_num
     except IndexError: # Helpful error message
         print("\nBad input. Please try again.")
-        main() # Starts everything again
+        main() # Start again from the very beginning (in case user inputted FIX incorrectly)
 
 def time_convert(raw_time):
     process_time = datetime.strptime(raw_time,'%Y%m%d-%H:%M:%S') # Parses FIX UTC timestamp as datetime object
@@ -54,10 +54,10 @@ def translator(raw_fix,delim_fix):
     else:
         root = tree.getroot()
         fields_num = len(delim_fix) # For debugging
-        print(delim_fix) # For debugging
-        print("There are",fields_num,"FIX tags.\n")
+        print(delim_fix,"\n") # For debugging
+        print(fields_num,"FIX tag(s) detected.\n")
         y = 0 # Initialise counter for loop
-        print("\n\tFIELD\t\t\t\t\t VALUE\n\n") # Initialise 'table'
+        print("\n\t      \t\t|\n\t  FIELD\t\t|\t\t\t\tVALUE\n\t      \t\t|\n\t      \t\t|") # Initialise 'table'
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
         for i in delim_fix:
             block_split = delim_fix[y].split('=') # Take each block and split into field and value
@@ -72,6 +72,8 @@ def translator(raw_fix,delim_fix):
                 value_trans = value # If an error is thrown, i.e. if a predefined value doesn't exist, simply passes user input to output
             else:
                 value_trans = tree.find('fields/field[@number="%s"]/value[@enum="%s"]'% (field,value)).attrib['description'] # Finds predefined value
+            if field == "8":
+                print("----------------------------------------------------------------------------------------\n")
             print("[",field,"]",field_trans," \t= \t","[",value,"]",value_trans,"\n") # Prints field and value with formatting
             y += 1 # Increments counter so that the loop performs the above actions for every block in the list
 
@@ -80,10 +82,15 @@ def repeater():
         repeat = input("Parse more FIX? y/n\n")
     except EOFError:
         print("\nstdin limit reached. Please launch the program again to continue using.\n") # Helpful and succint error message instead of 3 lines of garbage
+        # Python doesn't allow additional input if the standard input reaches the end. This means that piping data into the script is a one-shot usage method.
         sys.exit(0) # Better than breaking while True loop below
     else:   
         if repeat == 'n':
             sys.exit(0)
+
+def exit_handler(): # Exits script in Linux when KeyboardInterrupt is passed
+    if os.name == "posix":
+        sys.exit(0)
 
 def main():
     while True:
@@ -91,10 +98,10 @@ def main():
             raw_fix = input("\n\nEnter FIX: \n\n")
         except KeyboardInterrupt:
             print("\nUser interrupt detected. Exiting...\n") # Looks nicer
-            # sys.exit(0) 
-	    # Better than breaking while True loop
+            exit_handler() # Windows considers CTRL-V as a keyboard interrupt, so a KeyboardInterrupt error handle only works for Linux
+            # Windows users must close the Python window manually
         else:
-            delim_fix = re.split('[|\s^A]',raw_fix)
+            delim_fix = re.split('[|\n\s^A]',raw_fix)
             translator(raw_fix, delim_fix)
             repeater()
 
