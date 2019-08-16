@@ -42,10 +42,10 @@ def translator(raw_fix,delim_fix):
             delim_fix.remove('') # Remove all whitespaces from list. They remain due to delimiters present at the end of messages and cause issues unless removed.
         except ValueError:
             break
-    to_replace = 'parser.py'
-    cwd = sys.argv[0].replace(to_replace,'')
+    to_replace = os.path.basename(__file__) # Get filename
+    cwd = sys.argv[0].replace(to_replace,'') # Get working directory without filename
     if cwd == '':
-        cwd = '.'
+        cwd = '.' # Correct syntax for setting working directory to be the same directory as this file's location
     fix_spec_file_num = spec_loader(delim_fix[0].split('.')) # Global variable for FIX spec file name
     try:
         tree = ET.parse("{}/spec/FIX{}.xml".format(cwd,fix_spec_file_num)) # Reading the correct XML file
