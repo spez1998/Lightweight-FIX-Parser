@@ -34,4 +34,4 @@ Double-click the `parser.py` file to run the script.
 - On Windows, CTRL-C will not break the script and close the program. To exit the program, close the terminal window.
 =======
 - CTRL-V in Windows caused the program to close because CTRL-V is a KeyboardInterrupt, so the exit condition for this is temporarily disabled. Standby for a proper exit function.
->>>>>>> 77e254ae9ec5f4cff3e2d5529ba0f921cef13909
+
