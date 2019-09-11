@@ -15,82 +15,77 @@ from datetime import datetime
 import sys
 import os
 
-def flags(): # Do something with this?
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-t", "--table", help="display translated FIX in rows and columns", action="store_true")
-    parser.add_argument("-v", "--verbose", help="dispaly verbose FIX fields and values", action="store_true")
-    parser.parse_args()
-
 def spec_loader(spec_block):
+    # Load a supplied FIX specification and tell the user which version is loaded
     try:    
-        fix_spec_raw = [spec_block[1],spec_block[2]] # For telling the user which spec file is loaded
+        fix_spec_raw = [spec_block[1],spec_block[2]]
         fix_spec_file_num = ''.join(fix_spec_raw)
         print('FIX Specification',spec_block[1],".",spec_block[2],"detected.")
         return fix_spec_file_num
-    except IndexError: # Helpful error message
+    except IndexError:
         print("\nBad input. Please try again.")
-        main() # Start again from the very beginning (in case user inputted FIX incorrectly)
+        main()
 
 def time_convert(raw_time):
-    process_time = datetime.strptime(raw_time,'%Y%m%d-%H:%M:%S') # Parses FIX UTC timestamp as datetime object
-    neat_time = process_time.strftime('%H:%M:%S on %d/%m/%Y') # Rearranges parsed timestamp into something more readable
+    # Convert UTC timestamps into readable format
+    process_time = datetime.strptime(raw_time,'%Y%m%d-%H:%M:%S')
+    neat_time = process_time.strftime('%H:%M:%S on %d/%m/%Y')
     return neat_time
 
 def translator(raw_fix,delim_fix):
     while True:
         try:
-            delim_fix.remove('') # Remove all whitespaces from list. They remain due to delimiters present at the end of messages and cause issues unless removed.
+            delim_fix.remove('')
         except ValueError:
             break
-    to_replace = os.path.basename(__file__) # Get filename
-    cwd = sys.argv[0].replace(to_replace,'') # Get working directory without filename
+    to_replace = os.path.basename(__file__)
+    cwd = sys.argv[0].replace(to_replace,'')
+    # Format working directory properly
     if cwd == '':
-        cwd = '.' # Correct syntax for setting working directory to be the same directory as this file's location
-    fix_spec_file_num = spec_loader(delim_fix[0].split('.')) # Global variable for FIX spec file name
+        cwd = '.'
+    fix_spec_file_num = spec_loader(delim_fix[0].split('.'))
+    # Load spec
     try:
-        tree = ET.parse("{}/spec/FIX{}.xml".format(cwd,fix_spec_file_num)) # Reading the correct XML file
+        tree = ET.parse("{}/spec/FIX{}.xml".format(cwd,fix_spec_file_num))
     except:
         print("Spec not supported. Please try again.\n")
     else:
         root = tree.getroot()
-        fields_num = len(delim_fix) # For debugging
-        print(delim_fix,"\n") # For debugging
         print(fields_num,"FIX tag(s) detected.\n")
-        y = 0 # Initialise counter for loop
-        print("\n\t      \t\t|\n\t  FIELD\t\t|\t\t\t\tVALUE\n\t      \t\t|\n\t      \t\t|") # Initialise 'table'
+        y = 0
+        print("\n\t      \t\t|\n\t  FIELD\t\t|\t\t\t\tVALUE\n\t      \t\t|\n\t      \t\t|")
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
         for i in delim_fix:
-            block_split = delim_fix[y].split('=') # Take each block and split into field and value
-            field = block_split[0] # Each element in list assigned easy to use variable name
+            block_split = delim_fix[y].split('=')
+            field = block_split[0]
             value = block_split[1]
             if field == '52':
-                value = time_convert(value) # To make timestamp easy to read
-            field_trans = tree.find('fields/field[@number="%s"]'% field).attrib['name'] # Find the name of the field from the XML
+                value = time_convert(value)
+            field_trans = tree.find('fields/field[@number="%s"]'% field).attrib['name']
+            # Find predefined values for fields
             try:
-                tree.find('fields/field[@number="%s"]/value'% field).tag # Check for the existence of predefined values for a field in the XML
-            except: # The program throws an error when no predefined values are present
-                value_trans = value # If an error is thrown, i.e. if a predefined value doesn't exist, simply passes user input to output
+                tree.find('fields/field[@number="%s"]/value'% field).tag
+            # Error condition if field doesn't have predefined value; just load user input as value
+            except:
+                value_trans = value
             else:
-                value_trans = tree.find('fields/field[@number="%s"]/value[@enum="%s"]'% (field,value)).attrib['description'] # Finds predefined value
+                value_trans = tree.find('fields/field[@number="%s"]/value[@enum="%s"]'% (field,value)).attrib['description']
+            # Multi-message separation
             if field == "8":
                 print("----------------------------------------------------------------------------------------\n")
-            print("[",field,"]",field_trans," \t= \t","[",value,"]",value_trans,"\n") # Prints field and value with formatting
-            y += 1 # Increments counter so that the loop performs the above actions for every block in the list
+            print("[",field,"]",field_trans," \t= \t","[",value,"]",value_trans,"\n")
+            y += 1
 
 def repeater():
     try:
         repeat = input("Parse more FIX? y/n\n")
     except EOFError:
-        print("\nstdin limit reached. Please launch the program again to continue using.\n") # Helpful and succint error message instead of 3 lines of garbage
-        # Python doesn't allow additional input if the standard input reaches the end. This means that piping data into the script is a one-shot usage method.
-        sys.exit(0) # Better than breaking while True loop below
+        # Prettier error msg
+        print("\nstdin limit reached. Please launch the program again to continue using.\n")
+        sys.exit(0)
     else:   
         if repeat == 'n':
             sys.exit(0)
-
-def exit_handler(): # Exits script in Linux when KeyboardInterrupt is passed
-    if os.name == "posix":
-        sys.exit(0)
 
 def main():
     while True:
@@ -98,14 +93,12 @@ def main():
             raw_fix = input("\n\nEnter FIX: \n\n")
         except KeyboardInterrupt:
             print("\nUser interrupt detected. Exiting...\n") # Looks nicer
-            exit_handler() # Windows considers CTRL-V as a keyboard interrupt, so a KeyboardInterrupt error handle only works for Linux
-            # Windows users must close the Python window manually
+            if os.name == "posix":
+                sys.exit(0)
         else:
             delim_fix = re.split('[|\n\s^A]',raw_fix)
             translator(raw_fix, delim_fix)
             repeater()
-
- 
          
 if __name__ == "__main__":
     main()
