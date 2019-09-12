@@ -6,11 +6,11 @@
 # This tool takes a FIX message as input (either via manual input to CLI or via piped command) and outputs a readable, verbose version.
 # Terminology used is defined as follows. For a FIX message in the format:
 # X=Y(D)X=Y(D)X=Y(D)...
-# X = field, Y = value, (D) = delimiter (commonly ASCI code 0x01, could also be | or space)
+# X = field, Y = value, (D) = delimiter (commonly ASCII code 0x01, could also be | or space)
 
-import xml.etree.ElementTree as ET # XML parsing library
+import xml.etree.ElementTree as ET
 import argparse
-import re # String manipulation library
+import re
 from datetime import datetime
 import sys
 import os
@@ -20,7 +20,7 @@ def spec_loader(spec_block):
     try:    
         fix_spec_raw = [spec_block[1],spec_block[2]]
         fix_spec_file_num = ''.join(fix_spec_raw)
-        print('FIX Specification',spec_block[1],".",spec_block[2],"detected.")
+        print('FIX Specification '+spec_block[1]+"."+spec_block[2]+" detected.")
         return fix_spec_file_num
     except IndexError:
         print("\nBad input. Please try again.")
@@ -33,6 +33,7 @@ def time_convert(raw_time):
     return neat_time
 
 def translator(raw_fix,delim_fix):
+    # Translate the message
     while True:
         try:
             delim_fix.remove('')
@@ -51,7 +52,6 @@ def translator(raw_fix,delim_fix):
         print("Spec not supported. Please try again.\n")
     else:
         root = tree.getroot()
-        print(fields_num,"FIX tag(s) detected.\n")
         y = 0
         print("\n\t      \t\t|\n\t  FIELD\t\t|\t\t\t\tVALUE\n\t      \t\t|\n\t      \t\t|")
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n")
@@ -61,6 +61,9 @@ def translator(raw_fix,delim_fix):
             value = block_split[1]
             if field == '52':
                 value = time_convert(value)
+            # Tag 27 causes issues
+            if field == '27':
+                value = 'S'
             field_trans = tree.find('fields/field[@number="%s"]'% field).attrib['name']
             # Find predefined values for fields
             try:
@@ -73,7 +76,7 @@ def translator(raw_fix,delim_fix):
             # Multi-message separation
             if field == "8":
                 print("----------------------------------------------------------------------------------------\n")
-            print("[",field,"]",field_trans," \t= \t","[",value,"]",value_trans,"\n")
+            print("[",field,"]",field_trans," \t= \t[",value,"]",value_trans,"\n")
             y += 1
 
 def repeater():
@@ -81,7 +84,7 @@ def repeater():
         repeat = input("Parse more FIX? y/n\n")
     except EOFError:
         # Prettier error msg
-        print("\nstdin limit reached. Please launch the program again to continue using.\n")
+        print("\nEOF reached. Please launch the program again to continue using.\n")
         sys.exit(0)
     else:   
         if repeat == 'n':
